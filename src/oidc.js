@@ -145,12 +145,36 @@ function Oidc(options) {
   async function init() {
     try {
       const queryStringCode = getParameterByName('code', window.location.href);
+      const state = getParameterByName('state', window.location.href);
       const oidcUser = getUser();
 
-      //If there was a user in session storage
+      // If there's a code in the query string (callback from OIDC provider)
       if (queryStringCode) {
         await getTokensByCode(queryStringCode);
-        window.history.replaceState({}, document.title, window.location.pathname);
+
+        // Decode the state to get the original URL
+        if (state) {
+          try {
+            const decodedState = JSON.parse(window.atob(state));
+            if (decodedState.originalUrl) {
+              // Restore the original URL, including hash and query params
+              window.history.replaceState(
+                {},
+                document.title,
+                decodeURIComponent(decodedState.originalUrl)
+              );
+            } else {
+              // Fallback to just removing the code and state from URL if originalUrl is not present
+              removeCodeAndStateFromUrl();
+            }
+          } catch (error) {
+            console.error('Error decoding state:', error);
+            removeCodeAndStateFromUrl();
+          }
+        } else {
+          removeCodeAndStateFromUrl();
+        }
+
         if (options.externalSessionUrl) {
           await refreshExternalSession();
         }
@@ -161,6 +185,13 @@ function Oidc(options) {
     } catch (e) {
       setUser(null);
     }
+  }
+
+  function removeCodeAndStateFromUrl() {
+    const url = new URL(window.location.href);
+    url.searchParams.delete('code');
+    url.searchParams.delete('state');
+    window.history.replaceState({}, document.title, url.toString());
   }
 
   return {
