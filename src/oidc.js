@@ -25,7 +25,16 @@ function Oidc(options) {
   }
 
   function redirectToAuthorize() {
-    window.location = `${options.authorizeEndpoint}?state=${options.clientId}`;
+    const currentUrl = encodeURIComponent(window.location.href);
+
+    const stateObj = {
+      originalUrl: currentUrl,
+      clientId: options.clientId,
+    };
+
+    const encodedState = btoa(JSON.stringify(stateObj));
+
+    window.location = `${options.authorizeEndpoint}?state=${encodedState}`;
   }
 
   function setUser(user) {
