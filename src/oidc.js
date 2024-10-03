@@ -59,6 +59,7 @@ function Oidc(options) {
     try {
       const response = await fetch(options.tokenEndpoint, {
         method: 'POST',
+        credentials: 'include',
         headers: {
           'Content-Type': 'application/json'
         },
