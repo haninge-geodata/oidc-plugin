@@ -167,12 +167,9 @@ function Oidc(options) {
           try {
             const decodedState = JSON.parse(window.atob(state));
             if (decodedState.originalUrl) {
-              // Restore the original URL, including hash and query params
-              window.history.replaceState(
-                {},
-                document.title,
-                decodeURIComponent(decodedState.originalUrl)
-              );
+              // Redirect to the original URL, including hash and query params
+              console.log(`Redirecting to original URL: ${decodeURIComponent(decodedState.originalUrl)}`);
+              window.location = decodeURIComponent(decodedState.originalUrl);
             } else {
               // Fallback to just removing the code and state from URL if originalUrl is not present
               removeCodeAndStateFromUrl();
