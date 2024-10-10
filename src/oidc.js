@@ -17,9 +17,12 @@ function getParameterByName(name, url) {
 }
 
 function Oidc(options) {
+  console.log('Creating OIDC instance with options', options);
   function getUser() {
     const userString = window.sessionStorage.getItem('oidc_user');
-    if (!userString || userString === 'undefined' || userString === 'null') return anonymous;
+    console.log('User string', userString);
+    if (!userString || userString === 'undefined' || userString === 'null')
+      return anonymous;
     const oidcUser = JSON.parse(userString);
     return oidcUser;
   }
@@ -94,6 +97,7 @@ function Oidc(options) {
 
   //Ask for user info, return promise. Keep it concise.
   async function verifyUser() {
+    console.log('Verifying user');
     try {
       const user = getUser();
       if (!user.authenticated) {
@@ -109,6 +113,8 @@ function Oidc(options) {
         })
       });
       if (response.ok) {
+        console.log('cookies', response.cookies);
+        console.log('headers', response.headers);
         const user = await response.json();
         setUser(user);
         return;
@@ -129,8 +135,13 @@ function Oidc(options) {
       if (!user.authenticated) {
         return;
       }
-      const response = await fetch(`${options.externalSessionUrl}?access_token=${user.access_token}`);
+      console.log('Refreshing external session');
+      const response = await fetch(
+        `${options.externalSessionUrl}?access_token=${user.access_token}`
+      );
       if (response.ok) {
+        console.log('cookies', response.cookies);
+        console.log('headers', response.headers);
         console.info('Successfully refreshed external session');
       } else {
         throw 'External service did not respond with OK';
