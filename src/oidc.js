@@ -25,7 +25,7 @@ function Oidc(options) {
   }
 
   function redirectToAuthorize() {
-    window.location = `${options.authorizeEndpoint}?state=${options.clientId}`;
+    window.location = `${options.authorizeEndpoint}?state=${options.clientId}&redirectUrl=${options.redirectUrl}`;
   }
 
   function setUser(user) {
@@ -54,7 +54,8 @@ function Oidc(options) {
           'Content-Type': 'application/json'
         },
         body: JSON.stringify({
-          code
+          code,
+          redirectUrl: options.redirectUrl
         })
       });
       if (response.ok) {

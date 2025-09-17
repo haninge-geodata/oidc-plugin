@@ -1,7 +1,7 @@
 # OIDC plugin
 Plugin for OpenID Connect authorization with Origo.
 
-Requires Origo 2.1.1 or later, Origo server with auth and an OpenID connect provider.
+Requires Origo 2.1.1 or later, Origo server with auth (updated for multiple domains) and an OpenID connect provider.
 
 OpenID connect provider, client id and client secret are configured in Origo server.
 
@@ -24,15 +24,17 @@ OpenID connect provider, client id and client secret are configured in Origo ser
 
     <script type="text/javascript">
     	//Init origo
+      var siteroot = window.location.hostname.split('.')[0];// multiple domains
       Oidc.createOidcAuth(
         {
-          externalSessionUrl: 'url',
+          externalSessionUrl: '/geoserver',// multiple domains
           updateSessionOnRefresh: true,
           sessionRefreshTimeout: 59,
           tokenEndpoint: '/origoserver/auth/access_token',
           authorizeEndpoint: '/origoserver/auth/authorize',
           signOutUrl: 'url',
-          clientId: 'sigtuna',
+          redirectUrl: siteroot,// multiple domains
+          clientId: siteroot,// multiple domains
         },
         client => {
           if (client.getUser().authenticated) {
@@ -58,4 +60,5 @@ Option | Type | Description
 `tokenEndpoint` | string | Path to origo server access token endpoint - Required
 `authorizeEndpoint` | string | Path to origo server authorize endpoint - Required
 `signOutUrl` | string | Redirects to set url after sign out if provided
+`redirectUrl` | string | Specifies which origo url origo server will redirect to after successful openId authentication - Required
 `clientId` | string | Specifies which origo client origo server will redirect to after successful openId authentication - Required
