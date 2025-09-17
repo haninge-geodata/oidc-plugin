@@ -9,7 +9,7 @@
     "build": "webpack --config ./tasks/webpack.prod.js",
     "build:dev": "webpack --config ./tasks/webpack.dev.js --mode development"
   },
-  "author": "",
+  "author": "Åse Mäller (tror jag)",
   "license": "MIT",
   "devDependencies": {
     "@babel/core": "^7.28.4",
